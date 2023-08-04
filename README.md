@@ -1,3 +1,3 @@
 # Final Project - MEDITREE
 
-![header](https://capsule-render.vercel.app/api?type=transparent&color=auto&height=300&section=header&text=MEDITREE%20&fontSize=80)
+![header](https://capsule-render.vercel.app/api?type=slice&color=auto&height=300&section=header&text=MEDITREE&fontSize=80)
