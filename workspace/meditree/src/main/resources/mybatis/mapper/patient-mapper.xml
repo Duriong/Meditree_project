@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="patient">
+   <insert id="enroll">
+  	INSERT INTO PATIENT
+  	(
+		NO
+		,PA_NAME
+		,PA_TEL
+		,RRN
+		,PA_GENDER
+		,CAREGIVER
+		,ADDRESS
+		,MEMO
+  	)
+  	VALUES
+  	(
+  		SEQ_PATIENT_NO.NEXTVAL
+		, #{paName}
+		, #{paTel}
+		, #{rrn}
+		, #{paGender}
+		, #{caregiver}
+		, #{address}
+		, #{memo}
+  	)
+  </insert>
+  
+  <select id="getCnt" resultType="int">
+  	SELECT COUNT (NO)
+  	FROM PATIENT
+  	<if test="searchType == 'paName'">
+	WHERE PA_NAME LIKE '%${searchValue}%'
+	</if>
+  </select>
+  
+  <select id="getSimplePatientList" resultType="PatientVo">
+
+  SELECT 
+  	NO
+	,PA_NAME
+	,PA_TEL
+	,RRN
+	,PA_GENDER
+	,CAREGIVER
+	,ADDRESS
+	,PA_DATE
+	,MEMO
+	FROM PATIENT
+	<if test="searchType == 'paName'">
+	WHERE PA_NAME LIKE '%${searchValue}%'
+	</if>
+	ORDER BY NO DESC
+  </select>
+  
+  <select id="getPaInfo" resultType="PatientVo">
+  	SELECT
+  	 NO
+	,PA_NAME
+	,PA_TEL
+	,RRN
+	,PA_GENDER
+	,CAREGIVER
+	,ADDRESS
+	,PA_DATE
+	,MEMO
+  	FROM PATIENT
+  	WHERE NO = ${paNo}
+  </select>
+
+  <select id = "getDepartmentList" resultType="map">
+  SELECT 
+  	NO
+	,TITLE
+  	FROM DEPARTMENT
+  	WHERE
+  	NO IN (40, 50, 60, 70)
+  </select>
+  
+
+<select id="getDoctorList" resultType="memberVo">
+  	SELECT
+	    E.NO,
+	    E.NAME,
+	    P.POTITLE,
+        D.TITLE,
+        E.DEPT_NO
+	FROM
+	    EMPLOYEE E
+	    JOIN  POSITION P ON P.NO = E.POSITION_NO
+        JOIN DEPARTMENT D ON (E.DEPT_NO = D.NO)
+	WHERE
+	    E.QUIT_YN = 'N'
+		AND (P.NO = 2 OR P.NO = 3)   
+		ORDER BY E.DEPT_NO, E.POSITION_NO
+	</select>
+  
+	<insert id="insertTreatment">
+	INSERT INTO 
+	RECEIPT
+	(
+	NO
+	,STATUS
+	,PAY
+	,PA_NO
+	,SYMPTOM
+	,EM_NO
+	,DEPT_NO
+	)
+	VALUES
+	(
+	SEQ_RECEIPT_NO.NEXTVAL
+	,'W'
+	,'N'
+	,#{paNo}
+	,#{symptom}
+	,#{emNo}
+	,#{deptNo}
+	)
+	
+	</insert>  
+	<select id="selectWaitingPatient" resultType="PatientVo">
+    SELECT 
+        R.NO,
+        P.PA_NAME,
+        CASE 
+            WHEN P.PA_GENDER = 'M' THEN '남'
+            WHEN P.PA_GENDER = 'F' THEN '여'
+            ELSE NULL
+        END AS PA_GENDER,
+        R.DEPT_NO,
+        R.SYMPTOM,
+        R.EM_NO,
+        trunc((to_number(to_char(sysdate, 'YYYYMMDD')) - to_number(to_char(decode(substr(P.RRN, 8, 1), '1', '19', '2', '19', '20') || substr(P.RRN, 1, 6)))) / 10000) as "AGE"
+    FROM
+        PATIENT P
+        JOIN RECEIPT R ON P.NO = R.PA_NO
+    WHERE R.STATUS = 'W'
+	</select>
+
+	<select id="selectIngPatient" resultType="PatientVo">
+	SELECT 
+	 R.NO
+	 ,P.PA_NAME
+     ,CASE 
+         WHEN P.PA_GENDER = 'M' THEN '남'
+         WHEN P.PA_GENDER = 'F' THEN '여'
+         ELSE NULL
+     END AS PA_GENDER
+	 ,R.DEPT_NO
+	 ,R.SYMPTOM
+	,trunc((to_number(to_char(sysdate, 'YYYYMMDD'))-to_number(to_char(decode(substr(P.RRN, 8, 1), '1', '19', '2', '19', '20')||substr(P.RRN, 1, 6))))/10000) as "AGE"
+	FROM
+	    PATIENT P
+	    JOIN  RECEIPT R ON P.NO = R.PA_NO
+        WHERE R.STATUS = 'S'
+	</select>
+	<select id="wlistSortByDept" resultType="PatientVo">
+		SELECT 
+			 R.NO
+			 ,P.PA_NAME
+		     ,CASE 
+		         WHEN P.PA_GENDER = 'M' THEN '남'
+		         WHEN P.PA_GENDER = 'F' THEN '여'
+		         ELSE NULL
+		     END AS PA_GENDER
+			 ,R.DEPT_NO
+			 ,R.SYMPTOM
+			 ,R.EM_NO
+			,trunc((to_number(to_char(sysdate, 'YYYYMMDD'))-to_number(to_char(decode(substr(P.RRN, 8, 1), '1', '19', '2', '19', '20')||substr(P.RRN, 1, 6))))/10000) as "AGE"
+		FROM
+			    PATIENT P
+			    JOIN  RECEIPT R ON P.NO = R.PA_NO
+		        WHERE R.STATUS = 'W'
+        AND
+    <choose>
+      <when test="deptNo != null and deptNo == 1">
+        R.DEPT_NO IN (40, 50, 60, 70)
+      </when>
+      <otherwise>
+        R.DEPT_NO = #{deptNo}
+      </otherwise>
+    </choose>
+	</select>
+	
+	
+		<select id="plistSortByDept" resultType="PatientVo">
+		SELECT 
+			 R.NO
+			 ,P.PA_NAME
+		     ,CASE 
+		         WHEN P.PA_GENDER = 'M' THEN '남'
+		         WHEN P.PA_GENDER = 'F' THEN '여'
+		         ELSE NULL
+		     END AS PA_GENDER
+			 ,R.DEPT_NO
+			 ,R.SYMPTOM
+			 ,R.EM_NO
+			,trunc((to_number(to_char(sysdate, 'YYYYMMDD'))-to_number(to_char(decode(substr(P.RRN, 8, 1), '1', '19', '2', '19', '20')||substr(P.RRN, 1, 6))))/10000) as "AGE"
+		FROM
+		    PATIENT P
+		    JOIN  RECEIPT R ON P.NO = R.PA_NO
+	        WHERE R.STATUS = 'S'
+        AND
+    <choose>
+      <when test="deptNo != null and deptNo == 1">
+        R.DEPT_NO IN (40, 50, 60, 70)
+      </when>
+      <otherwise>
+        R.DEPT_NO = #{deptNo}
+      </otherwise>
+    </choose>
+	</select>
+
+	
+		<!-- 진료중으로 상태 변경 -->	
+	<update id="changePatientStatus">
+	UPDATE 
+	RECEIPT
+	SET
+	STATUS = 'S'
+	WHERE NO = #{no}
+	AND STATUS = 'W'
+	</update>
+	<select id="insertJinryo" resultType="PatientVo">
+	SELECT 
+		NO
+		,STATUS
+		,PAY
+		,PA_NO
+		,SYMPTOM
+		,DEPT_NO
+		,EM_NO
+	FROM RECEIPT
+	WHERE NO = #{no}
+	</select>
+	
+	<insert id="insertJinryoIng">
+	INSERT INTO JINRYO (NO, JI_DAY, JI_TIME, DEPT, SYMPTOM, CXL_YN, PA_NO, RM_NO)
+	VALUES (
+	  SEQ_JINRYO_NO.NEXTVAL,
+	  TO_CHAR(SYSDATE, 'YYYY-MM-DD'),
+	  TO_CHAR(SYSDATE, 'HH24:MI'),
+	  #{deptNo},
+	  #{symptom},
+	  DEFAULT,
+	  #{paNo},
+	  (
+	    SELECT NO
+	    FROM D_ROOM
+	    WHERE EM_NO = #{emNo}
+	  )
+	)
+	</insert>
+	
+	<select id="surgeryWaitingList" resultType="PatientVo">
+    SELECT
+    	R.NO AS RE_NO,
+	    R.SYMPTOM,
+	    R.EM_NO,
+	    R.DEPT_NO,
+	    P.PA_NAME,
+	    P.RRN,
+	    P.PA_GENDER,
+	    TH.PA_NO
+	FROM
+	    RECEIPT R
+	    JOIN PATIENT P ON R.PA_NO = P.NO
+	    JOIN TM_HISTORY TH ON R.PA_NO = TH.PA_NO
+	WHERE
+    	TH.NEEDSURGERY = 'Y'
+		AND R.STATUS = 'S'
+    	AND R.PAY = 'N'
+	</select>
+	
+		<select id="proomWaitingList" resultType="PatientVo">
+    SELECT
+    	R.NO AS RE_NO,
+	    R.SYMPTOM,
+	    R.EM_NO,
+	    R.DEPT_NO,
+	    P.PA_NAME,
+	    P.RRN,
+	    P.PA_GENDER,
+	   TH.PA_NO
+	FROM
+	    RECEIPT R
+	    JOIN PATIENT P ON R.PA_NO = P.NO
+	    JOIN TM_HISTORY TH ON R.PA_NO = TH.PA_NO
+	WHERE
+    	TH.NEEDSTAY = 'Y'
+    	AND R.STATUS = 'S'
+    	AND R.PAY = 'N'
+	</select>
+	
+
+	
+  <select id="getreceiptList" resultType="PatientVo">
+  	SELECT 
+	  	P.NO
+		,P.PA_NAME
+		,P.RRN
+	     ,CASE 
+	         WHEN P.PA_GENDER = 'M' THEN '남'
+	         WHEN P.PA_GENDER = 'F' THEN '여'
+	         ELSE NULL
+	     END AS PA_GENDER
+		,P.ADDRESS
+		,P.PA_DATE
+		,R.EM_NO
+		,R.NO AS RE_NO
+		,E.DEPT_NO
+		,E.NAME
+	FROM
+	    RECEIPT R
+	    JOIN PATIENT P ON R.PA_NO = P.NO
+	    JOIN EMPLOYEE E ON R.EM_NO = E.NO
+    WHERE R.STATUS = 'F'
+    AND R.PAY = 'N'
+	ORDER BY R.NO
+  </select>
+  
+	<!-- 수납완료 조회 -->
+	<select id="payDoneList" resultType="PatientVo">
+    SELECT
+	    R.NO,
+	    P.PA_NAME,
+     CASE 
+         WHEN P.PA_GENDER = 'M' THEN '남'
+         WHEN P.PA_GENDER = 'F' THEN '여'
+         ELSE NULL
+     END AS PA_GENDER,
+		TO_CHAR(TH.JI_DATE, 'YYYY-MM-DD') AS JI_DATE,
+	    R.DEPT_NO,
+	    R.EM_NO,
+	    P.RRN,
+	    R.PA_NO,
+	    E.NAME
+	FROM
+	    RECEIPT R
+	    JOIN PATIENT P ON R.PA_NO = P.NO
+	    JOIN TM_HISTORY TH ON R.PA_NO = TH.PA_NO
+	    JOIN EMPLOYEE E ON R.EM_NO = E.NO
+	WHERE
+    	R.STATUS = 'F'
+    	AND R.PAY = 'Y' 
+    	ORDER BY TH.JI_DATE DESC
+	</select>
+	
+  <select id="getReceiptCnt" resultType="int">
+  	SELECT COUNT (NO)
+  	FROM RECEIPT
+  	WHERE
+  	STATUS = 'F'
+  	AND
+  	PAY ='N'
+  </select>
+  
+    <select id="getReceiptDoneCnt" resultType="int">
+  	SELECT COUNT (NO)
+  	FROM RECEIPT
+  	WHERE
+  	STATUS = 'F'
+  	AND
+  	PAY ='Y'
+  </select>
+  
+  		<!-- 수납완료로 상태 변경 -->	
+	<update id="changeToReceipt">
+	UPDATE 
+	RECEIPT
+	SET
+	PAY = 'Y'
+	WHERE NO = #{no}
+	AND STATUS = 'F'
+	</update>
+	
+	<!-- 입원실 출력용 입원실 리스트 조회 -->   
+   <select id="selectPRoomList" resultType="ReservationVo">    
+	SELECT
+	NO
+	,TYPE
+	,NOTE
+	FROM
+	P_ROOM
+	ORDER BY NO ASC
+   </select> 
+   	<!-- 수술실 출력용 수술실리스트 조회 -->   
+   <select id="selectSRoomList" resultType="ReservationVo">    
+	SELECT
+	NO
+	,USE_YN
+	,NOTE
+	FROM
+	SURGERY_RM
+	ORDER BY NO ASC
+   </select> 
+   
+   
+   <!-- 입원실,수술실 출력용 날짜 조회 -->    
+   <select id="selectDateList" resultType="ReservationVo"> 
+         SELECT TO_CHAR(TRUNC(to_date(#{nowDate}), 'MM') + LEVEL - 1, 'YYYY-MM-DD') AS WORKING_DAY
+		FROM DUAL
+		CONNECT BY LEVEL <![CDATA[ <= ]]> EXTRACT(DAY FROM LAST_DAY(to_date(#{nowDate})))
+   </select>
+   
+      <!-- 입원실 출력용 입원실 예약 리스트 조회 -->
+	<select id="selectPRoomBookingList" resultType="ReservationVo">
+ 		SELECT 
+		   M.WORKING_DAY, 
+		   PB.NO, 
+		   PB.PR_NO, 
+		   PB.EM_NO,
+           EM.NAME,
+		   LISTAGG(P.PA_NAME, ',') WITHIN GROUP(ORDER BY P.PA_NAME) as "namelist", 
+		   COUNT(*) as "count"
+		FROM ADM PB
+		JOIN 
+		(
+		    SELECT 
+		    WORKING_DAY, 
+		    NO, 
+		    PR_NO
+		    FROM (
+	         SELECT TO_CHAR(TRUNC(to_date(#{nowDate}), 'MM') + LEVEL - 1, 'YYYY-MM-DD') AS WORKING_DAY
+			FROM DUAL
+			CONNECT BY LEVEL<![CDATA[ <= ]]> EXTRACT(DAY FROM LAST_DAY(to_date(#{nowDate})))
+		    ), 
+		    ( 
+		        SELECT 
+		        NO, 
+		        PR_NO 
+		        FROM ADM
+		    )
+		) M ON ( (M.WORKING_DAY BETWEEN PB.ADM_START AND PB.ADM_FINISH) AND M.NO = PB.NO)
+		LEFT JOIN PATIENT P ON(PB.PA_NO = P.NO)
+        JOIN EMPLOYEE EM ON(PB.EM_NO = EM.NO)
+		GROUP BY M.WORKING_DAY, PB.PR_NO, PB.NO, PB.EM_NO, EM.NAME
+		ORDER BY M.WORKING_DAY, PR_NO
+	</select>
+	
+	      <!-- 수술실 출력용 수술실 예약 리스트 조회 -->
+	<select id="selectSRoomBookingList" resultType="ReservationVo">
+		SELECT 
+		   M.WORKING_DAY, 
+		   SB.NO, 
+		   SB.RM_NO, 
+		   SB.DOCTOR,
+		   SR.NOTE,
+		   COUNT(*) as "count"
+		FROM SURGERY_SCH SB
+		JOIN 
+		(
+		    SELECT 
+		    WORKING_DAY, 
+		    NO, 
+		    RM_NO
+		    FROM (
+		        SELECT TO_CHAR(TRUNC(to_date(#{nowDate}), 'MM') + LEVEL - 1, 'YYYY-MM-DD') AS WORKING_DAY
+		        FROM DUAL
+		        CONNECT BY LEVEL<![CDATA[ <= ]]> EXTRACT(DAY FROM LAST_DAY(to_date(#{nowDate})))
+		    ) D
+		    CROSS JOIN (SELECT NO, RM_NO FROM SURGERY_SCH) S
+		) M ON (M.WORKING_DAY = SB.SU_DATE AND M.NO = SB.NO)
+		LEFT JOIN SURGERY_RM SR ON (SB.RM_NO = SR.NO)
+		GROUP BY M.WORKING_DAY, SB.RM_NO, SB.NO, SR.NOTE,SB.DOCTOR
+		ORDER BY M.WORKING_DAY, SB.RM_NO
+	</select>
+	
+	<!-- 부서조회 -->
+<!-- 	<select id="selectDeptList" resultType="list">
+	SELECT
+	NO
+	,TITLE
+	,INCHARGE
+	FROM DEPARTMENT
+	WHERE
+	NO IN(40, 50, 60, 70)
+	
+	</select>
+  
+  의사 조회
+  <select id="doctorList"  resultType="list">
+  	SELECT
+	    E.NO,
+	    E.NAME,
+	    P.POTITLE,
+        D.TITLE,
+        E.DEPT_NO
+	FROM
+	    EMPLOYEE E
+	    JOIN  POSITION P ON P.NO = E.POSITION_NO
+        JOIN DEPARTMENT D ON (E.DEPT_NO = D.NO)
+	WHERE
+	    E.QUIT_YN = 'N'
+		AND (P.NO = 2 OR P.NO = 3)  
+  </select>  -->
+  
+<!--   <select id="getCategoryList" resultType="map">
+		SELECT 
+			NO
+			, TITLE
+			, MAJOR
+			, INCHARGE
+			FROM DEPARTMENT
+			WHERE INCHARGE = '의료진'
+	</select> -->
+  </mapper>

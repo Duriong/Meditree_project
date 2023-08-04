@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="mapUnderscoreToCamelCase" value="TRUE"/>
+	</settings>
+
+	<typeAliases>
+		<typeAlias type="com.medi.app.notice.vo.NoticeVo" alias="noticeVo"/>
+		<typeAlias type="com.medi.app.board.vo.BoardVo" alias="boardVo"/>
+		<typeAlias type="com.medi.app.common.file.FileVo" alias="fileVo"/>
+		<typeAlias type="com.medi.app.mediDevice.vo.MediDeviceVo" alias="mediDeviceVo"/>
+       <typeAlias type="com.medi.app.reception.patient.vo.PatientVo" alias="PatientVo"/>
+       <typeAlias type="com.medi.app.member.vo.MemberVo" alias="memberVo"/>
+       <typeAlias type="com.medi.app.member.vo.DeptVo" alias="deptVo"/>
+       <typeAlias type="com.medi.app.board.reply.vo.ReplyVo" alias="replyVo"/>
+       <typeAlias type="com.medi.app.bipum.vo.BipumVo" alias="bipumVo"/>
+       <typeAlias type="com.medi.app.tmHistory.vo.TmHistoryVo" alias="TmHistoryVo"/>
+       <typeAlias type="com.medi.app.approval.vo.ApprVo" alias="apprVo"/>
+       <typeAlias type="com.medi.app.mail.vo.MailVo" alias="mailVo"/>
+       <typeAlias type="com.medi.app.schedule.vo.ScheduleVo" alias="scheduleVo"/>
+       <typeAlias type="com.medi.app.jinryo.vo.JinryoVo" alias="jinryoVo"/>
+       <typeAlias type="com.medi.app.treat.vo.DrugVo" alias="drugVo"/>
+       <typeAlias type="com.medi.app.weeklymenu.vo.WMenuVo" alias="wMenuVo"/>
+		<typeAlias type="com.medi.app.schedule.vo.ScheduleVo" alias="scheduleVo"/>
+		<typeAlias type="com.medi.app.reservation.vo.ReservationVo" alias="reservationVo"/>
+		<typeAlias type="com.medi.app.electronicSign.vo.EleSignVo" alias="eleSignVo"/>
+
+	</typeAliases>
+
+</configuration>

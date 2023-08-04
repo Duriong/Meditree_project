@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mediDevice">
+
+	<select id="getMediDeviceList" resultType="mediDeviceVo">
+		SELECT *
+		FROM RA
+		WHERE DELYN = 'X'
+		ORDER BY NO DESC
+	</select>
+	
+	<insert id="write">
+	 INSERT INTO RA
+	 (
+		NO
+		,NAME
+		,TYPE
+		,CONTENT
+		,LOCATION
+	 )
+	 VALUES
+	 (
+		SEQ_RA_NO.NEXTVAL
+		,#{name}
+		,#{type}
+		,#{content}
+		,#{location}
+	 )
+	</insert>
+	
+	<select id="getMediDevice" resultType="mediDeviceVo">
+		SELECT *
+		FROM RA
+		WHERE NO = ${num}
+		AND   DELYN = 'X'
+	</select>
+	
+	<update id="edit">
+		UPDATE RA
+			SET
+				NAME = #{name}
+				,TYPE = #{type}
+				,STATUS = #{status}
+				,LOCATION = #{location}
+				,CONTENT = #{content}
+			WHERE NO = #{no}
+	</update>
+	
+	<select id="getMediDeviceListCnt" resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM RA
+	  	WHERE  DELYN = 'X'
+	</select>
+	
+	<update id="delete">
+		UPDATE RA
+			SET 
+				DELYN = 'O'
+		WHERE NO = #{num}
+	</update>
+
+</mapper>

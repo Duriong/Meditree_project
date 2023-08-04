@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="bipum">
+
+	<select id="getBipumList" resultType="bipumVo">
+		SELECT *
+		FROM FITMENT
+		WHERE DELYN = 'X'
+		ORDER BY NO DESC
+	</select>
+	
+	<insert id="write">
+		INSERT INTO FITMENT
+		(
+		      NO
+		       , NAME
+		       , CONTENT      
+		       , AMOUNT
+		)
+		VALUES
+		(
+		      SEQ_FITMENT_NO.NEXTVAL
+		       , #{name}
+		       , #{content}      
+		       , #{amount}
+		)
+	</insert>
+	
+	<select id="getBipum" resultType="bipumVo">
+		SELECT 
+	      NO
+	       , NAME
+	       , CONTENT
+	       , ENROLL_DATE
+	       , DELYN
+	       , AMOUNT
+		FROM FITMENT
+		WHERE NO = ${num}
+		AND DELYN = 'X'
+	</select>
+
+	<update id="edit">
+		UPDATE FITMENT
+	    SET
+	        NAME = #{name}
+	        , CONTENT = #{content}
+	        , AMOUNT = #{amount}
+	    WHERE NO = #{no}
+	</update>
+	
+	<update id="delete">
+		UPDATE FITMENT
+	    SET
+	          DELYN = 'O'
+	    WHERE NO = #{num}
+	</update>
+	
+	<select id="getBipumListCnt" resultType="int">
+		SELECT COUNT(*)
+		FROM FITMENT
+		WHERE DELYN = 'X'
+	</select>
+	
+	<insert id="insertAttachment">
+		INSERT ALL
+		<foreach collection="list" item="x" separator=" ">
+	        INTO F_ATT (NO, BNO, ORIGIN_NAME, CHANGE_NAME) VALUES ((SELECT GET_F_ATT_SEQ FROM DUAL), SEQ_FITMENT_NO.CURRVAL, #{x.originName}, #{x.changeName})
+		</foreach>
+		SELECT 1 FROM DUAL
+	</insert>
+	
+	<select id="getAttachmentList" resultType="fileVo">
+  		SELECT 
+  			NO
+			,BNO
+			,ORIGIN_NAME
+			,CHANGE_NAME
+			,ENROLL_DATE
+			,STATUS 
+		FROM F_ATT
+		WHERE BNO = #{bno}
+		AND STATUS = 'N'
+  	</select>
+  	
+  	<select id="getAttachment" resultType="fileVo">
+  		SELECT *
+  		FROM F_ATT
+  		WHERE NO = #{ano}
+  		AND STATUS = 'N'
+  	</select>
+	
+</mapper>
+
+
+
