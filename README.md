@@ -23,7 +23,7 @@
 - Front-End : `HTML5`, `CSS3(Bootstrap)`, `JavaScript`
 - Library : `Summernote API`
 - SCM : `Sourcetree`, `Github`
-- Team Collaboration Toll : `Notion`, `Discord`
+- Team Collaboration Tool : `Notion`, `Discord`
 <br>
 
 ## ☁️ DB 설계
