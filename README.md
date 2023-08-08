@@ -34,7 +34,7 @@
 
 ## 📌 담당 역할(구현 기능)
 ### :star: Wiki에 제가 구현한 기능의 화면과 코드를 정리해 두었습니다.
-### :point_right: [코드와 화면 보러 wiki로 이동](https://github.com/Duriong/Meditree_project/wiki) <br><br>
+### :point_right: [코드와 화면 보러 Wiki로 이동](https://github.com/Duriong/Meditree_project/wiki) <br><br>
 
 ### :bookmark: 비품 관리 게시판
 - 비품 조회, 등록, 수정, 삭제
