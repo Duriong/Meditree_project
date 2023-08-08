@@ -33,7 +33,7 @@
 <br>
 
 ## 📌 담당 역할(구현 기능)
-### :star: Wiki에 제가 구현한 기능의 화면과 코드를 정리해 두었습니다.
+### :star: Wiki에 제가 구현한 기능의 코드와 화면을 정리해 두었습니다.
 ### :point_right: [코드와 화면 보러 Wiki로 이동](https://github.com/Duriong/Meditree_project/wiki) <br><br>
 
 ### :bookmark: 비품 관리 게시판
@@ -48,8 +48,9 @@
 - 관리자 : 접수된 결재 문서 조회, 승인, 반려 <br><br>
 
 ## :movie_camera: 시연 영상
-### :star: 제가 구현한 파트 시연 영상입니다.
-### :point_right: [시연 영상 보러가기](https://clipchamp.com/watch/q2zfWtGdOFa) <br><br>
+### :star: 제가 구현한 파트의 코드와 화면, 시연 영상입니다.
+### :point_right: [코드와 화면](https://github.com/Duriong/Meditree_project/wiki)
+### :point_right: [완성본 시연 영상](https://clipchamp.com/watch/q2zfWtGdOFa) <br><br>
 
 # 황선영
 :fire: 어떤 천재도 꾸준하고 성실한 사람을 이기지 못한다고 합니다. <br>
@@ -57,9 +58,9 @@
 &nbsp;  제가 설정한 목표를 달성하기 위해 지속적으로 노력하고 성공적인 결과로 보여드리겠습니다.
 <br>
 - :orange_book: [포트폴리오](https://bit.ly/3rgsTOS)
-- 자바(JAVA)기반 공공데이터 융합 개발자 양성과정 수료
-- 7기 서울 핀테크 아카데미 수료
-- 청년 반응형 프론트앤드 개발자 양성과정 수료
+- 자바(JAVA)기반 공공데이터 융합 개발자 양성과정 수료 (KH정보교육원)
+- 7기 서울 핀테크 아카데미 수료 (서울특별시 금융투자교육원)
+- 청년 반응형 프론트앤드 개발자 양성과정 수료 (대우직업능력개발원)
 
 
 
